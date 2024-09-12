@@ -1,0 +1,135 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Remainder App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+          font-family: Cursive;
+            text-align: center;
+            color:blue;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .task-item.completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+ button {
+    background-color: #008B8B; /* Green background */
+    color: white;              /* White text */
+    border: none;              /* No border */
+    padding: 10px 20px;        /* Top and bottom padding: 10px, left and right padding: 20px */
+    margin: 5px;               /* Margin around the button */
+    cursor: pointer;           /* Pointer cursor on hover */
+    border-radius: 5px;        /* Rounded corners */
+    font-size: 16px;           /* Font size */
+}
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Daily Diary</h1>
+        <input type="text" id="task-id" placeholder="Enter task ID">
+        <input type="text" id="task-title" placeholder="Enter task title">
+        <button onclick="addTask()">Add Task</button>
+
+        <h2>Tasks</h2>
+        <ul id="task-list" class="task-list"></ul>
+
+        <h2>Manage Tasks</h2>
+        <input type="text" id="manage-id" placeholder="Enter task ID">
+        <button onclick="toggleTaskCompletion()">Toggle Completion</button>
+        <button onclick="deleteTask()">Delete Task</button>
+
+        <h2>Search Task by ID</h2>
+        <input type="text" id="search-id" placeholder="Enter task ID">
+        <button onclick="searchTask()">Search Task</button>
+        <div id="search-result"></div>
+    </div>
+
+    <script>
+        let tasks = [];
+
+        function addTask() {
+            const id = document.getElementById('task-id').value.trim();
+            const title = document.getElementById('task-title').value.trim();
+            
+            if (!id || !title) {
+                alert("Task ID and title cannot be empty.");
+                return;
+            }
+
+            // Check if the ID is unique
+            if (tasks.some(task => task.id === id)) {
+                alert("Task ID already exists. Please choose a different ID.");
+                return;
+            }
+
+            const task = { id, title, completed: false };
+            tasks.push(task);
+            document.getElementById('task-id').value = '';
+            document.getElementById('task-title').value = '';
+            renderTasks();
+        }
+
+        function toggleTaskCompletion() {
+            const id = document.getElementById('manage-id').value.trim();
+            const task = tasks.find(task => task.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                renderTasks();
+            } else {
+                alert("Task ID not found.");
+            }
+        }
+
+        function deleteTask() {
+            const id = document.getElementById('manage-id').value.trim();
+            tasks = tasks.filter(task => task.id !== id);
+            renderTasks();
+        }
+
+        function searchTask() {
+            const id = document.getElementById('search-id').value.trim();
+            const task = tasks.find(task => task.id === id);
+            const resultDiv = document.getElementById('search-result');
+            if (task) {
+                resultDiv.innerHTML = `ID: ${task.id} | Title: ${task.title} | Completed: ${task.completed}`;
+            } else {
+                resultDiv.innerHTML = "Task ID not found.";
+            }
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            tasks.forEach(task => {
+                const taskItem = document.createElement('li');
+                taskItem.className = 'task-item' + (task.completed ? ' completed' : '');
+                taskItem.textContent = `ID: ${task.id} | ${task.title}`;
+                taskList.appendChild(taskItem);
+            });
+        }
+    </script>
+</body>
+</html>
